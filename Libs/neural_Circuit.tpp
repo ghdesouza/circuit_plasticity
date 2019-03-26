@@ -29,7 +29,7 @@ class Neural_Circuit : public Graph<Neurons<T>*, Synapses<T>*>{
 				for(int j = 0; j < this->amount_edges[i]; j++){
 					temp_current += this->edges[i][j]->get_possynaptic_current();
 				}
-				this->nodes[i]->set_I_inj(this->nodes[i]->get_I_inj()+temp_current);
+				this->nodes[i]->set_I_inj(this->nodes[i]->get_I_inj()-temp_current);
 				
 				if(this->nodes[i]->step(dt)) this->firing[i] = true;
 				else this->firing[i] = false;
@@ -41,7 +41,8 @@ class Neural_Circuit : public Graph<Neurons<T>*, Synapses<T>*>{
 		void synapse_propagation(T dt){
 			for(int i = 0; i < this->amount_nodes; i++){
 				for(int j = 0; j < this->amount_edges[i]; j++){
-					this->edges[i][j]->step(dt, this->get_node(this->edges_destiny[i][j])->get_voltage(), this->firing[this->edges_destiny[i][j]]);
+					this->edges[i][j]->step(dt, this->get_node(this->edges_destiny[i][j])->get_voltage(), 
+											this->get_node(i+1)->get_voltage(), this->firing[this->edges_destiny[i][j]]);
 				}
 			}
 		}
