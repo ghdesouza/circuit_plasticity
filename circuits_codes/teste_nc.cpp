@@ -11,7 +11,7 @@ normal_distribution<double> distribution(0.0,0.5);
 
 int amount_neurons = 100;
 float dt = 0.01;
-float last_time = 1000;
+float last_time = 100;
 
 void create_random_circuit(Neural_Circuit<> *circuit);
 
@@ -44,7 +44,7 @@ int main(){
 	fclose(arq);
 	fclose(arq2);
 	system("python3 neuron_graphic.py");
-	system("python3 fired.py");
+	//system("python3 fired.py");
 	//circuit->print_graph();
 
 	// delete circuit; // ta com erro no destrutor (perguntar ao jhuan depois)
@@ -58,7 +58,7 @@ void create_random_circuit(Neural_Circuit<> *circuit){
 	float transmissor;
 
 	float prob_excitatory = 0.8;
-	int density_synapse = 0.2*amount_neurons;
+	int density_synapse = 10.2*amount_neurons;
 	float temp, type_neuron;
 	int id_pos;
 
