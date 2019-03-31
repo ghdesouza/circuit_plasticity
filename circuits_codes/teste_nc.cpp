@@ -7,18 +7,18 @@
 using namespace std;
 
 default_random_engine generator;
-normal_distribution<double> distribution(0.0,0.5);
+normal_distribution<double> distribution(0.0,1.0);
 
-int amount_neurons = 100;
-float dt = 0.01;
-float last_time = 100;
+int amount_neurons = 10;
+float dt = 0.1;
+float last_time = 500;
 
 void create_random_circuit(Neural_Circuit<> *circuit);
 
 int main(){
 
-	srand(time(NULL));
-	//srand(1);
+	//srand(time(NULL));
+	srand(1);
 
 	Neural_Circuit<> *circuit = new Neural_Circuit<>();
 	create_random_circuit(circuit);
@@ -27,9 +27,11 @@ int main(){
 	FILE* arq2 = fopen("fire.txt", "w");
 	for(int i = 0; i < (int)(last_time/dt); i++){
 		for(int j = 0; j < ((int)(1*amount_neurons)); j++){
-			if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 5*(((float)rand())/RAND_MAX));
-			else circuit->set_I_inj(j+1, 2*(((float)rand())/RAND_MAX));
+			//if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 5*(((float)rand())/RAND_MAX));
+			//else circuit->set_I_inj(j+1, 2*(((float)rand())/RAND_MAX));
 			//circuit->set_I_inj(j+1, 50*abs(distribution(generator)));
+			if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 50*(distribution(generator)));
+			else circuit->set_I_inj(j+1, 20*(distribution(generator)));
 		}
 		fprintf(arq, "%f\t%f\n", circuit->get_life_time(), circuit->get_energy());
 		fprintf(arq2, "%.5f", circuit->get_life_time());
@@ -58,7 +60,7 @@ void create_random_circuit(Neural_Circuit<> *circuit){
 	float transmissor;
 
 	float prob_excitatory = 0.8;
-	int density_synapse = 10.2*amount_neurons;
+	int density_synapse = 0.2*amount_neurons;
 	float temp, type_neuron;
 	int id_pos;
 
@@ -93,7 +95,6 @@ void create_random_circuit(Neural_Circuit<> *circuit){
 		for(int j = 0; j < density_synapse; j++){
 			if(type_neuron > 0)	variables[0] = 0.5*((float)rand())/RAND_MAX;
 			else variables[0] = -1.0*((float)rand())/RAND_MAX;
-			//variables[0] = 50*((float)rand())/RAND_MAX;
 			
 			id_pos = 1+(rand()%amount_neurons);
 			circuit->add_synapse("basic", variables, i, id_pos);
