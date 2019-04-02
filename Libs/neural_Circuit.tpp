@@ -27,7 +27,11 @@ class Neural_Circuit : public Graph<Neurons<T>*, Synapses<T>*>{
 			for(int i = 0; i < this->amount_nodes; i++){
 				temp_current = 0;
 				for(int j = 0; j < this->amount_edges[i]; j++){
-					temp_current += this->edges[i][j]->get_possynaptic_current();
+					if(this->get_node(this->edges_destiny[i][j])->get_transmissor() > 0){
+						temp_current += this->edges[i][j]->get_possynaptic_current();
+					}else{
+						temp_current -= this->edges[i][j]->get_possynaptic_current();
+					}
 				}
 				this->nodes[i]->set_I_inj(this->nodes[i]->get_I_inj()-temp_current);
 				

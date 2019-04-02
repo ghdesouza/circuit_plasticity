@@ -9,29 +9,53 @@ using namespace std;
 default_random_engine generator;
 normal_distribution<double> distribution(0.0,1.0);
 
-int amount_neurons = 10;
-float dt = 0.1;
+float dt = 0.5;
 float last_time = 500;
+
+int population_size[] = {10, 20, 50, 100};
+int current_intensities[] = {1, 2, 5, 8, 10};
+int densities_synapse[] = {10, 15, 20, 50, 60, 100, 150, 200};
+
+string str_population_size[] = {"10", "20", "50", "100"};
+string str_current_intensities[] = {"1", "2", "5", "8", "10"};
+string str_densities_synapse[] = {"10", "15", "20", "50", "60", "100", "150", "200"};
+
+int cnt_population_size = 0; // 0 to 3
+int cnt_current_intensities = 0; // 0 to 4
+int cnt_densities_synapse = 0; // 0 to 7
+
+float current_intensity = current_intensities[cnt_current_intensities];
+int density_synapse = densities_synapse[cnt_densities_synapse];
+int amount_neurons = population_size[cnt_population_size];
+float prob_excitatory = 0.8;
 
 void create_random_circuit(Neural_Circuit<> *circuit);
 
 int main(){
 
 	//srand(time(NULL));
-	srand(1);
+	srand(2019);
 
-	Neural_Circuit<> *circuit = new Neural_Circuit<>();
+	Neural_Circuit<> *circuit;
+
+	FILE* arq;
+	FILE* arq2;
+	
+	circuit = new Neural_Circuit<>();
 	create_random_circuit(circuit);
-
-	FILE* arq = fopen("saida.tmp", "w");
-	FILE* arq2 = fopen("fire.tmp", "w");
+	
+	arq = fopen(("saida_"+str_population_size[cnt_population_size]+
+				 "_"+str_current_intensities[cnt_current_intensities]+
+				 "_"+str_densities_synapse[cnt_densities_synapse]+
+				 ".tmp").c_str(), "w");
+	arq2 = fopen(("fire_"+str_population_size[cnt_population_size]+
+				 "_"+str_current_intensities[cnt_current_intensities]+
+				 "_"+str_densities_synapse[cnt_densities_synapse]+
+				 ".tmp").c_str(), "w");
 	for(int i = 0; i < (int)(last_time/dt); i++){
 		for(int j = 0; j < ((int)(1*amount_neurons)); j++){
-			//if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 5*(((float)rand())/RAND_MAX));
-			//else circuit->set_I_inj(j+1, 2*(((float)rand())/RAND_MAX));
-			//circuit->set_I_inj(j+1, 50*abs(distribution(generator)));
-			if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 50*(distribution(generator)));
-			else circuit->set_I_inj(j+1, 20*(distribution(generator)));
+			if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 5*current_intensity*(distribution(generator)));
+			else circuit->set_I_inj(j+1, 2*current_intensity*(distribution(generator)));
 		}
 		fprintf(arq, "%f\t%f\n", circuit->get_life_time(), circuit->get_energy());
 		fprintf(arq2, "%.5f", circuit->get_life_time());
@@ -39,17 +63,12 @@ int main(){
 			if(circuit->get_firing(k)) fprintf(arq2, "\t1");
 			else fprintf(arq2, "\t0");
 		}
-		////fprintf(arq, "%f\t%f\n", i*0.1, circuit->get_voltage(1));
 		circuit->step(dt);
 		fprintf(arq2, "\n");
 	}
 	fclose(arq);
 	fclose(arq2);
-	system("python3 neuron_graphic.py");
-	//system("python3 fired.py");
-	//circuit->print_graph();
-
-	// delete circuit; // ta com erro no destrutor (perguntar ao jhuan depois)
+	//system("python neuron_graphic.py");
     return 0;
 }
 
@@ -59,8 +78,6 @@ void create_random_circuit(Neural_Circuit<> *circuit){
 	float variables[6];
 	float transmissor;
 
-	float prob_excitatory = 0.8;
-	int density_synapse = 0.2*amount_neurons;
 	float temp, type_neuron;
 	int id_pos;
 
@@ -94,7 +111,7 @@ void create_random_circuit(Neural_Circuit<> *circuit){
 		type_neuron = circuit->get_node(i)->get_transmissor();
 		for(int j = 0; j < density_synapse; j++){
 			if(type_neuron > 0)	variables[0] = 0.5*((float)rand())/RAND_MAX;
-			else variables[0] = -1.0*((float)rand())/RAND_MAX;
+			else variables[0] = 1.0*((float)rand())/RAND_MAX;
 			
 			id_pos = 1+(rand()%amount_neurons);
 			circuit->add_synapse("basic", variables, i, id_pos);
