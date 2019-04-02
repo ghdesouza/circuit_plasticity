@@ -23,8 +23,8 @@ int main(){
 	Neural_Circuit<> *circuit = new Neural_Circuit<>();
 	create_random_circuit(circuit);
 
-	FILE* arq = fopen("saida.txt", "w");
-	FILE* arq2 = fopen("fire.txt", "w");
+	FILE* arq = fopen("saida.tmp", "w");
+	FILE* arq2 = fopen("fire.tmp", "w");
 	for(int i = 0; i < (int)(last_time/dt); i++){
 		for(int j = 0; j < ((int)(1*amount_neurons)); j++){
 			//if(circuit->get_node(j+1)->get_transmissor() > 0) circuit->set_I_inj(j+1, 5*(((float)rand())/RAND_MAX));
