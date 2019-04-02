@@ -24,14 +24,23 @@ int cnt_population_size = 0; // 0 to 3
 int cnt_current_intensities = 0; // 0 to 4
 int cnt_densities_synapse = 0; // 0 to 7
 
-float current_intensity = current_intensities[cnt_current_intensities];
+int current_intensity = current_intensities[cnt_current_intensities];
 int density_synapse = densities_synapse[cnt_densities_synapse];
 int amount_neurons = population_size[cnt_population_size];
 float prob_excitatory = 0.8;
 
 void create_random_circuit(Neural_Circuit<> *circuit);
 
-int main(){
+int main(int argc, char** argv){
+
+	printf("%d %d %d\n", atoi(argv[1]), atoi(argv[2]), atoi(argv[3]));
+
+	int cnt_population_size = atoi(argv[1]);
+	int cnt_current_intensities = atoi(argv[2]);
+	int cnt_densities_synapse = atoi(argv[3]);
+	current_intensity = current_intensities[cnt_current_intensities];
+	density_synapse = densities_synapse[cnt_densities_synapse];
+	amount_neurons = population_size[cnt_population_size];
 
 	//srand(time(NULL));
 	srand(2019);
@@ -44,11 +53,11 @@ int main(){
 	circuit = new Neural_Circuit<>();
 	create_random_circuit(circuit);
 	
-	arq = fopen(("saida_"+str_population_size[cnt_population_size]+
+	arq = fopen(("exit_files/saida_"+str_population_size[cnt_population_size]+
 				 "_"+str_current_intensities[cnt_current_intensities]+
 				 "_"+str_densities_synapse[cnt_densities_synapse]+
 				 ".tmp").c_str(), "w");
-	arq2 = fopen(("fire_"+str_population_size[cnt_population_size]+
+	arq2 = fopen(("exit_files/fire_"+str_population_size[cnt_population_size]+
 				 "_"+str_current_intensities[cnt_current_intensities]+
 				 "_"+str_densities_synapse[cnt_densities_synapse]+
 				 ".tmp").c_str(), "w");
